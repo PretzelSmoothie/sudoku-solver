@@ -5,31 +5,42 @@
 #define SUDOKUSOLVER_HPP
 
 #include <iostream>
+#include <string>
+#include <fstream>
+
+using std::cout;
+using std::endl;
 
 class SudokuSolver {
 private:
 
-  struct Point {
-    int x;
-    int y;
+  struct LocationonBoard {
+    int row;
+    int col;
   };
 
   struct Board {
-    int contents[9][9];
-    int openSquares;
-    Point move[81];
+    int contents[9][9]; //this is sudoku puzzle we are solving
+    int openSquares; //num of open spots avail.
+    LocationonBoard corrLoStor[81];//1D index of squares an array of x and y coordinates for a given position
   };
 
+  Board sudokuBoard;
   bool finished;
+  const int NUM_OF_ELEMENTS = 81;
+  const int MAX_ROWS = 9;
+  const int MAX_COLS = 9;
 
 public:
-  SudokuSolver(std::string fileName);
-  void backtrack(int arr[], int k, Board *sBoard);
-  bool isSolution(int arr[], int k, Board *sBoard);
-  void findPossibilities(int arr[], int k, Board *sBoard, int c[], int *nCandidates);
-  void processSolution(int arr[], int k, Board *sBoard);
-  void makeMove(int arr[], int k, Board *sBoard);
-  void unmakeMove(int arr[], int k, Board *sBoard);
+  SudokuSolver(std::string fileName);//also should initialize board, set finish to false
+  void solvePuzzle(); //call backtrack - helper method
+  void backtrack(int correctvalues[], int currcorrval);
+  bool isSolution(int correctvalues[], int currcorrval);
+  void findCandidates(int correctvalues[], int currcorrval, int candidates[], int &nCandidates);
+  void processSolution(int correctvalues[], int currcorrval);
+  void makeMove(int correctvalues[], int currcorrval);
+  void unmakeMove(int correctvalues[], int currcorrval);
+  void print(); //for testing purposes
 
 
 };
