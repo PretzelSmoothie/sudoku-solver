@@ -21,7 +21,7 @@ private:
 
   struct Board {
     int contents[9][9]; //this is sudoku puzzle we are solving
-    int openSquares; //num of open spots avail.
+    int openSquares = 0; //num of open spots avail.
     LocationonBoard corrLoStor[81];//1D index of squares an array of x and y coordinates for a given position
   };
 
@@ -34,12 +34,12 @@ private:
 public:
   SudokuSolver(std::string fileName);//also should initialize board, set finish to false
   void solvePuzzle(); //call backtrack - helper method
-  void backtrack(int correctvalues[], int currcorrval);
-  bool isSolution(int correctvalues[], int currcorrval);
-  void findCandidates(int correctvalues[], int currcorrval, int candidates[], int &nCandidates);
-  void processSolution(int correctvalues[], int currcorrval);
-  void makeMove(int correctvalues[], int currcorrval);
-  void unmakeMove(int correctvalues[], int currcorrval);
+  void backtrack(int correctvalues[], int currCorrVal);
+  bool isSolution(int correctvalues[], int currCorrVal);
+  void findCandidates(int correctvalues[], int currCorrVal, int candidates[], int &nCandidates);
+  void processSolution(int correctvalues[], int currCorrVal);
+  void makeMove(int correctvalues[], int currCorrVal);
+  void unmakeMove(int correctvalues[], int currCorrVal);
   void print(); //for testing purposes
 
 

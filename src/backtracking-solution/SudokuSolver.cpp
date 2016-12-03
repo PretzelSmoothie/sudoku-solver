@@ -15,6 +15,10 @@ SudokuSolver::SudokuSolver(std::string fileName) {
     for(int row = 0; row < MAX_ROWS; row++) {
       for(int col = 0; col < MAX_COLS; col++) {
         inputFile >> sudokuBoard.contents[row][col];
+        if(sudokuBoard.contents[row][col] == 0) {
+          sudokuBoard.openSquares++;
+
+        }
       }
     }
   }
@@ -34,18 +38,18 @@ void SudokuSolver::solvePuzzle() {
 }
 
 
-void SudokuSolver::backtrack(int correctValues[], int currcorrval) {
+void SudokuSolver::backtrack(int correctValues[], int currCorrVal) {
 
 	int candidates[NUM_OF_ELEMENTS]; //stores candidates
 	int nCandidates; // # of candidates
 
 
-	if(isSolution(correctValues, currcorrval))//base case
-    	processSolution(correctValues, currcorrval); //set finished to true, print the board - we are done
+	if(isSolution(correctValues, currCorrVal))//base case
+    	processSolution(correctValues, currCorrVal); //set finished to true, print the board - we are done
 
   else {
-  	  currcorrval ++;
-    findCandidates(correctValues, currcorrval, candidates, nCandidates);//
+  	  currCorrVal ++;
+    findCandidates(correctValues, currCorrVal, candidates, nCandidates);//
        //find most attractive square
     	 //find the number of possible solutions for most attractive square
     	 //set candidates
@@ -54,13 +58,13 @@ void SudokuSolver::backtrack(int correctValues[], int currcorrval) {
 
 
     for(int i = 0; i < nCandidates; i++) {//loop through candidates
-      correctValues[currcorrval] = candidates[i];
-      makeMove(correctValues, currcorrval); //fills the square with the possible solution
-      backtrack(correctValues, currcorrval); //continue along the board
+      correctValues[currCorrVal] = candidates[i];
+      makeMove(correctValues, currCorrVal); //fills the square with the possible solution
+      backtrack(correctValues, currCorrVal); //continue along the board
       if(finished)
         return; //we found a solution, exit
       else
-        unmakeMove(correctValues, currcorrval); //well, it was incorrect, empty the square
+        unmakeMove(correctValues, currCorrVal); //well, it was incorrect, empty the square
 
     }
 
@@ -71,7 +75,7 @@ void SudokuSolver::backtrack(int correctValues[], int currcorrval) {
 Description: Checks if the board is a solution
 */
 
-bool SudokuSolver::isSolution(int correctvalues[], int currcorrval)
+bool SudokuSolver::isSolution(int correctValues[], int currCorrVal)
 {
  //if there are open spots, this won't do anything
 
@@ -91,28 +95,28 @@ bool SudokuSolver::isSolution(int correctvalues[], int currcorrval)
 /*
 Description:
 */
-void SudokuSolver::findCandidates(int correctvalues[], int currcorrval, int candidates[], int &nCandidates)
+void SudokuSolver::findCandidates(int correctValues[], int currCorrVal, int candidates[], int &nCandidates)
 { }
 
 
 /*
 Description:
 */
-void SudokuSolver::processSolution(int correctvalues[], int currcorrval)
-{ }
-
-
-/*
-Description:
-*/
-void SudokuSolver::makeMove(int correctvalues[], int currcorrval)
+void SudokuSolver::processSolution(int correctValues[], int currCorrVal)
 {
+  finished = true;
+  print();
+}
+
+
 /*
-    //example make move
-  sudokuBoard.contents[correctRow][correctCol] = currectvalues[currcorval];
-  sudokuBoard.corrLoStor[currcorval].x = correctRow;
-  sudokuBoard.corrLoStor[currcorval].y = correctCol;
+Description:
 */
+void SudokuSolver::makeMove(int correctValues[], int currCorrVal)
+{
+  int correctRow = sudokuBoard.corrLoStor[currCorrVal].row;
+  int correctCol = sudokuBoard.corrLoStor[currCorrVal].col;
+  sudokuBoard.contents[correctRow][correctCol] = correctValues[currCorrVal];
 
 }
 
@@ -120,11 +124,15 @@ void SudokuSolver::makeMove(int correctvalues[], int currcorrval)
 /*
 Description:
 */
-void SudokuSolver::unmakeMove(int correctvalues[], int currcorrval)
-{ }
+void SudokuSolver::unmakeMove(int correctValues[], int currCorrVal)
+{
+  int correctRow = sudokuBoard.corrLoStor[currCorrVal].row;
+  int correctCol = sudokuBoard.corrLoStor[currCorrVal].col;
+  sudokuBoard.contents[correctRow][correctCol] = 0;
+}
 
 /*
-Description: FOR TESTING PURPOSES ONLY
+Description:
 */
 
 void SudokuSolver::print() {
