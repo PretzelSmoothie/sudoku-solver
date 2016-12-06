@@ -7,16 +7,20 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 
 using std::cout;
 using std::endl;
+
+enum Cluster {Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9};
+
 
 class SudokuSolver {
 private:
 
   struct LocationonBoard {
-    int row;
-    int col;
+    int x;
+    int y;
   };
 
   struct Board {
@@ -30,6 +34,8 @@ private:
   const int NUM_OF_ELEMENTS = 81;
   const int MAX_ROWS = 9;
   const int MAX_COLS = 9;
+  const int MAX_POSSIBLE = 10;
+
 
 public:
   SudokuSolver(std::string fileName);//also should initialize board, set finish to false
@@ -40,7 +46,10 @@ public:
   void processSolution(int correctvalues[], int currCorrVal);
   void makeMove(int correctvalues[], int currCorrVal);
   void unmakeMove(int correctvalues[], int currCorrVal);
-  void print(); //for testing purposes
+  void findNextSquare(int& row, int& col);
+  void findPossibilites(const int row, const int col, bool possible[]);
+  void getCluster(const int row, const int col, int& clustRow, int& clustCol);
+  void print();
 
 
 };
