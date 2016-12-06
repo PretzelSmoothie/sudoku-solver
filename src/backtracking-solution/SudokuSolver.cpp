@@ -355,14 +355,14 @@ void SudokuSolver::findPossibilites(const int row, const int col, bool possible[
   }
 
   //check current cluster
-  int clustRow, clustCol;
-  getCluster(row, col, clustRow, clustCol);
+  int rowEnd, rowBegin, colEnd, colBegin;;
+  getCluster(row, col, rowBegin, rowEnd, colBegin, colEnd);
 
 
-  for(int i = 0; i < clustRow; i++) {
-    for(int j = 0; j < clustCol; j++) {
-      if(sudokuBoard.contents[i][j] != 0) {
-        possible[sudokuBoard.contents[i][j]] = false;
+  for(int row = rowBegin; row <= rowEnd; row++) {
+    for(int col = colBegin; col < colEnd; col++) {
+      if(sudokuBoard.contents[row][col] != 0) {
+        possible[sudokuBoard.contents[row][col]] = false;
 
       }
     }
@@ -370,25 +370,56 @@ void SudokuSolver::findPossibilites(const int row, const int col, bool possible[
 
 }
 
-void SudokuSolver::getCluster(const int row, const int col, int& clustRow, int& clustCol)
+void SudokuSolver::getCluster(const int row, const int col,
+  int& rowBegin, int& rowEnd, int& colBegin, int& colEnd)
 {
   if(row <= 2){
-    clustRow = 3;
-    if(col <=2) { clustCol = 3; }
-    else if(col >=3 && col <= 5) { clustCol = 6; }
-    else if(col >= 6 && col <= 8) { clustCol = 9; }
+    rowEnd = 2;
+    rowBegin = 0;
+    if(col <=2) {
+      colBegin = 0;
+      colEnd = 2;
+     }
+    else if(col >=3 && col <= 5) {
+      colBegin = 3;
+      colEnd = 5;
+     }
+    else if(col >= 6 && col <= 8) {
+      colBegin = 6;
+      colEnd = 8;
+    }
   }
   else if(row >= 3 && row <= 5) {
-    clustRow = 6;
-    if(col <= 2) { clustCol = 3; }
-    else if(col >= 3 && col <= 5) { clustCol = 6;}
-    else if(col >= 6 && col <= 8) { clustCol = 9;}
+    rowEnd = 3;
+    rowBegin = 5;
+    if(col <= 2) {
+      colBegin = 0;
+      colEnd = 2;
+    }
+    else if(col >= 3 && col <= 5) {
+      colBegin = 3;
+      colEnd = 5;
+    }
+    else if(col >= 6 && col <= 8) {
+      colBegin = 6;
+      colEnd = 8;
+    }
   }
   else if(row >= 6 && row <= 8){
-    clustRow = 9;
-    if(col <= 2) { clustCol = 3;}
-    else if(col >= 3 && col <= 5) { clustCol = 6;}
-    else if(col >= 6 && col <= 8) { clustCol = 9; }
+    rowBegin = 6;
+    rowEnd = 8;
+    if(col <= 2) {
+      colBegin = 0;
+      colEnd = 2;
+    }
+    else if(col >= 3 && col <= 5) {
+      colBegin = 3;
+      colEnd = 5;
+    }
+    else if(col >= 6 && col <= 8) {
+      colBegin = 6;
+      colBegin = 8;
+     }
   }
 }
 

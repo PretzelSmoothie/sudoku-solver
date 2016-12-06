@@ -48,7 +48,7 @@ public:
   void unmakeMove(int correctvalues[], int currCorrVal);
   void findNextSquare(int& row, int& col);
   void findPossibilites(const int row, const int col, bool possible[]);
-  void getCluster(const int row, const int col, int& clustRow, int& clustCol);
+  void getCluster(const int row, const int col, int& rowBegin, int& rowEnd, int& colBegin, int& colEnd);
   void print();
 
 
