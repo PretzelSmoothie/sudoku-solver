@@ -4,7 +4,11 @@
 //constructor
 SudokuSolver::SudokuSolver(std::string fileName) {
   std::ifstream inputFile;
-
+  NUM_OF_ELEMENTS = 81;
+  MAX_ROWS = 9;
+  MAX_COLS = 9;
+  MAX_POSSIBLE = 10;
+  currCorrVal = -1;
   //open file and read it into the Board
   inputFile.open(fileName.c_str());
 
@@ -15,7 +19,11 @@ SudokuSolver::SudokuSolver(std::string fileName) {
     for(int row = 0; row < MAX_ROWS; row++) {
       for(int col = 0; col < MAX_COLS; col++) {
         inputFile >> sudokuBoard.contents[row][col];
-        if(sudokuBoard.contents[row][col] == 0) { sudokuBoard.openSquares++; }
+        if(sudokuBoard.contents[row][col] == 0) {
+          sudokuBoard.openSquares++;
+          openSpots[sudokuBoard.openSquares].x = row;
+          openSpots[sudokuBoard.openSquares].y = col;
+        }
       }
     }
   }
@@ -27,37 +35,40 @@ SudokuSolver::SudokuSolver(std::string fileName) {
 
 
 
-
+//start solving!
 void SudokuSolver::solvePuzzle() {
-  int correctValues[NUM_OF_ELEMENTS];
-  int currcorrval = -1;
-  backtrack(correctValues, currcorrval);
+
+  backtrack();
 }
 
-
-void SudokuSolver::backtrack(int correctValues[], int currCorrVal) {
-
-	int candidates[NUM_OF_ELEMENTS]; //stores candidates
+//backtrck
+void SudokuSolver::backtrack() {
+  cout << "You are in Backtrack" << endl;
+	int candidates[81]; //stores candidates
 	int nCandidates; // # of candidates
+  print();
 
-
-	if(isSolution(correctValues, currCorrVal)) {
-    	processSolution(correctValues, currCorrVal); //set finished to true, print the board - we are done
-}
+	if(isSolution()) {
+    	processSolution(); //set finished to true, print the board - we are done
+  }
 
 else {
+  cout << "IN ELSE";
 	  currCorrVal++;
-    findCandidates(correctValues, currCorrVal, candidates, nCandidates);//
+    findCandidates(candidates, nCandidates);//
 
 
     for(int i = 0; i < nCandidates; i++) {//loop through candidates
+      cout << "YOU ARE IN BAXKTRACK" << endl;
       correctValues[currCorrVal] = candidates[i];
-      makeMove(correctValues, currCorrVal); //fills the square with the possible solution
-      backtrack(correctValues, currCorrVal); //continue along the board
+
+      makeMove(); //fills the square with the possible solution
+      backtrack(); //continue along the board
+
       if(finished)
         return; //we found a solution, exit
       else
-        unmakeMove(correctValues, currCorrVal); //well, it was incorrect, empty the square
+        unmakeMove(); //well, it was incorrect, empty the square
 
     }
 
@@ -68,10 +79,20 @@ else {
 Description: Checks if the board is a solution
 */
 
-bool SudokuSolver::isSolution(int correctValues[], int currCorrVal)
+bool SudokuSolver::isSolution()
 {
-  if(sudokuBoard.openSquares == 0){
-    for (int i = 0; i < 9; i++)//for each row, column and cluster - outer of nested loop
+/*  if(sudokuBoard.openSquares == 0){
+
+    finished = true;
+    return true; }*/
+    if (sudokuBoard.openSquares != 0)
+    	{
+    		cout << "OpenSquares is more than 0, returning false";
+    		return false;
+    	}
+    	else
+    	{
+    		for (int i = 0; i < 9; i++)//for each row, column and cluster - outer of nested loop
     		{
 
     			std::vector<int> rowbank(9,0);//create new empty row to fill
@@ -119,16 +140,10 @@ bool SudokuSolver::isSolution(int correctValues[], int currCorrVal)
     					return false;//then return false
     				}
     			}
-    }
-  //example in isSoluton
-
-/*  for i in corrLoStor array
-    int row = sudokuBoard.corrLoStor[0].x //the row of the location of the square that the correct value fills
-    int col = sudokuBoard.corrLoStor[0].y
-    check sudokuBoard[row][col] for correctness
-*/
-  }
-  return false;
+    		}
+    	}
+    	cout << " Is a solution, returning true";
+    return true;
 }
 
 
@@ -137,41 +152,51 @@ bool SudokuSolver::isSolution(int correctValues[], int currCorrVal)
 /*
 Description:
 */
-void SudokuSolver::findCandidates(int correctValues[], int currCorrVal, int candidates[], int &nCandidates)
+void SudokuSolver::findCandidates(int candidates[], int &nCandidates)
 {
-
+  cout << endl << "IN FIND CANDIDATES";
   int row, col; // Will store position of next move
   bool possible[MAX_POSSIBLE]; //what is possible for the given square;
   memset(possible, true, MAX_POSSIBLE); //set all values to true for later
 
   //which square should we fill next?
   findNextSquare(row, col);
-
+  cout << endl << "outside of find square row: "
+      << row << " col: " << col;
   //store the current row and column
   sudokuBoard.corrLoStor[currCorrVal].x = row;
   sudokuBoard.corrLoStor[currCorrVal].y = col;
 
+
   nCandidates = 0;
 
   if(row < 0 && col < 0) return; //no moves possible, abort
-
+  cout << endl << "before possible" << row << " " << col;
   //find all possible values, using extra function again
-  //findPossiblites(row, col, possible);
+  findPossibilites(row, col, possible);
+  cout << endl << "outside of possibe";
+
+  std::cin.ignore();
 
   //update nCandidates and Candidate array
-  for(int i = 0; i <= 9; i++) {
+  for(int i = 1; i <= 9; i++) {
     if(possible[i] == true) {
+      cout << endl << "POISSBLE: " << i << "!" << endl;
       candidates[nCandidates] = i;
+      cout << "NEEDS TO MATCH THIS: " << candidates[nCandidates] << " at position "
+           << nCandidates << endl;
       nCandidates++;
+
     }
   }
+  cout << endl << "EXITING CANDIDATES";
 }
 
 
 /*
 Description:
 */
-void SudokuSolver::processSolution(int correctValues[], int currCorrVal)
+void SudokuSolver::processSolution()
 {
   finished = true;
   print();
@@ -181,11 +206,13 @@ void SudokuSolver::processSolution(int correctValues[], int currCorrVal)
 /*
 Description:
 */
-void SudokuSolver::makeMove(int correctValues[], int currCorrVal)
+void SudokuSolver::makeMove()
 {
   int correctRow = sudokuBoard.corrLoStor[currCorrVal].x;
   int correctCol = sudokuBoard.corrLoStor[currCorrVal].y;
   sudokuBoard.contents[correctRow][correctCol] = correctValues[currCorrVal];
+  cout << "Correct value: " << correctValues[currCorrVal] << endl;
+  sudokuBoard.openSquares--;
 
 }
 
@@ -193,11 +220,13 @@ void SudokuSolver::makeMove(int correctValues[], int currCorrVal)
 /*
 Description:
 */
-void SudokuSolver::unmakeMove(int correctValues[], int currCorrVal)
+void SudokuSolver::unmakeMove()
 {
   int correctRow = sudokuBoard.corrLoStor[currCorrVal].x;
   int correctCol = sudokuBoard.corrLoStor[currCorrVal].y;
   sudokuBoard.contents[correctRow][correctCol] = 0;
+  sudokuBoard.openSquares--;
+
 }
 
 /*
@@ -205,7 +234,13 @@ Description:
 */
 
 void SudokuSolver::findNextSquare(int& row, int& col) {
-  /*
+  cout << endl << "ENTER SQUARE";
+  row = openSpots[sudokuBoard.openSquares].x;
+  col = openSpots[sudokuBoard.openSquares].y;
+  cout << row << " " << col;
+  std::cin.ignore();
+
+/*
     int rowzeros[9];
   	int colzeros[9];
   	int clusterzeros[9];
@@ -246,6 +281,7 @@ void SudokuSolver::findNextSquare(int& row, int& col) {
   			if (clusterArray[j] == 0)
   				cluscount++;
   		}
+
   		rowzeros[i] = rowcount;//i.e. set row [1] to rowcount of row 1
   		cout << "rowcount " << i << " " << rowcount << endl;
   		colzeros[i] = colcount;
@@ -256,7 +292,7 @@ void SudokuSolver::findNextSquare(int& row, int& col) {
   	//END GET AND STORE TOTAL ZEROS FOR ROW, COLUMN, AND CLUSTER
   	//BEGIN FIND 0 SQUARE WITH LEAST ZERO VALUE
   	int minzeros = 81;//initialize min zeros
-  	LocationonBoard bestSquare;//initialize best square
+  	LocationBoard bestSquare;//initialize best square
   	int cluster = 0;//cluster tracker
 
   	for (int k = 0; k < 9; k++)//outer loop, loop through board rows
@@ -268,7 +304,7 @@ void SudokuSolver::findNextSquare(int& row, int& col) {
   		{
   			if (h != 0 && h % 3 == 0)//edge tracking for cluster
   				cluster++;
-  			cout << cluster;
+
 
   			int totalzeros = 0;//initialize total zeros counter
   			int samezeros = 0;//initialze same zeros counter (to not double count 0s from the same cluster, if in the same row/col)
@@ -325,13 +361,17 @@ void SudokuSolver::findNextSquare(int& row, int& col) {
   				}
   			}
   		}
-  		cout << endl;
+
   		cluster = cluster - 2;
   	}
   	cout << "The best square is " << bestSquare.x << ", " << bestSquare.y;
-  	cout << "\nIt has " << minzeros << " zeros in other rows, columns and clusters.";
-  print();
-*/
+  	//cout << "\nIt has " << minzeros << " zeros in other rows, columns and clusters.";
+  //print();
+
+  row = bestSquare.x;
+  col = bestSquare.y;
+  */
+  cout << endl << "EXITING SQUARE";
 }
 
 /*
@@ -340,15 +380,17 @@ Description:
 
 void SudokuSolver::findPossibilites(const int row, const int col, bool possible[])
 {
+  cout << endl << "ENTER POSSIBLE";
+
   //check current row
-  for(int i = 1; i < MAX_POSSIBLE; i++) {
+  for(int i = 0; i < 9; i++) {
     if(sudokuBoard.contents[row][i] != 0) {
       possible[sudokuBoard.contents[row][i]] = false;
     }
   }
 
   //check current column
-  for(int i = 1; i < MAX_POSSIBLE; i++ ) {
+  for(int i = 0; i < 9; i++ ) {
     if(sudokuBoard.contents[i][col] != 0) {
       possible[sudokuBoard.contents[i][col]] = false;
     }
@@ -359,14 +401,16 @@ void SudokuSolver::findPossibilites(const int row, const int col, bool possible[
   getCluster(row, col, rowBegin, rowEnd, colBegin, colEnd);
 
 
-  for(int row = rowBegin; row <= rowEnd; row++) {
-    for(int col = colBegin; col < colEnd; col++) {
-      if(sudokuBoard.contents[row][col] != 0) {
-        possible[sudokuBoard.contents[row][col]] = false;
+  for(int i = rowBegin; i < rowEnd; i++) {
+    for(int j = colBegin; j < colEnd; j++) {
+      if(sudokuBoard.contents[i][j] != 0) {
+        possible[sudokuBoard.contents[i][j]] = false;
 
       }
     }
   }
+
+  cout << endl << "EXIT";
 
 }
 
@@ -374,51 +418,53 @@ void SudokuSolver::getCluster(const int row, const int col,
   int& rowBegin, int& rowEnd, int& colBegin, int& colEnd)
 {
   if(row <= 2){
-    rowEnd = 2;
+    rowEnd = 3;
     rowBegin = 0;
     if(col <=2) {
       colBegin = 0;
-      colEnd = 2;
+      colEnd = 3;
      }
     else if(col >=3 && col <= 5) {
       colBegin = 3;
-      colEnd = 5;
+      colEnd = 6;
      }
     else if(col >= 6 && col <= 8) {
       colBegin = 6;
-      colEnd = 8;
+      colEnd = 9;
     }
   }
+
   else if(row >= 3 && row <= 5) {
-    rowEnd = 3;
-    rowBegin = 5;
+    rowEnd = 6;
+    rowBegin = 3;
     if(col <= 2) {
       colBegin = 0;
       colEnd = 2;
     }
     else if(col >= 3 && col <= 5) {
       colBegin = 3;
-      colEnd = 5;
+      colEnd = 6;
     }
     else if(col >= 6 && col <= 8) {
       colBegin = 6;
-      colEnd = 8;
+      colEnd = 9;
     }
   }
+
   else if(row >= 6 && row <= 8){
     rowBegin = 6;
-    rowEnd = 8;
+    rowEnd = 9;
     if(col <= 2) {
       colBegin = 0;
-      colEnd = 2;
+      colEnd = 3;
     }
     else if(col >= 3 && col <= 5) {
       colBegin = 3;
-      colEnd = 5;
+      colEnd = 6;
     }
     else if(col >= 6 && col <= 8) {
       colBegin = 6;
-      colBegin = 8;
+      colEnd = 9;
      }
   }
 }
@@ -433,6 +479,16 @@ void SudokuSolver::print() {
     for(int col = 0; col < MAX_COLS; col++) {
       cout << sudokuBoard.contents[row][col] << " ";
     }
+  }
+  //briefly pause program
+  cout << endl << "Press enter to continue the program...";
+  std::cin.ignore();
+}
+
+void SudokuSolver::printOpenSpots() {
+  for(int i = 1; i < sudokuBoard.openSquares; i++) {
+    cout << endl << "Row: " << openSpots[i].x
+         << "Col: " << openSpots[i].y;
   }
   //briefly pause program
   cout << endl << "Press enter to continue the program...";
