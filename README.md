@@ -22,7 +22,7 @@ There is currently one test case, which may be found in the tests folder.
 
 The current board being tested is listed below:
 
-0 2 0 4 5 6 7 8 9
+0 2 0 4 5 6 7 8 9,
 4 5 7 0 8 0 2 3 6
 6 8 9 2 3 7 0 4 0
 0 0 5 3 6 2 9 7 4
