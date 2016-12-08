@@ -1,5 +1,6 @@
 //implementation file for sudoku-solver
 #include "SudokuSolver.hpp"
+#include <cstring>
 
 //constructor
 SudokuSolver::SudokuSolver(std::string fileName) {
@@ -38,8 +39,6 @@ SudokuSolver::SudokuSolver(std::string fileName) {
   finished = false;
 }
 
-
-
 //start solving!
 void SudokuSolver::solvePuzzle() {
 
@@ -68,6 +67,9 @@ else
   }
 }
 
+
+
+
 /*
 Description: Checks if there is a solution to the board
 */
@@ -75,8 +77,8 @@ Description: Checks if there is a solution to the board
 bool SudokuSolver::isSolution()
 {
 
-    if (sudokuBoard.openSquares != 0) { return false; }
-    else
+    if (sudokuBoard.openSquares != 0) { return false; }//if the board isn't full
+    else//if the board is full
   	{
   		for (int i = 0; i < 9; i++)//for each row, column and cluster - outer of nested loop
   		{
@@ -95,7 +97,7 @@ bool SudokuSolver::isSolution()
   			if (i == 6 || i == 7 || i == 8) { edgerow += 6; }
 
         int val = 0;
-  			int clusterArray[9] = { 0,0,0,0,0,0,0,0,0 };
+  			int clusterArray[9] = { 0,0,0,0,0,0,0,0,0 };//array that will hold cluster
 
         for (int m = 0; m < 3; m++)
   			{
@@ -107,7 +109,7 @@ bool SudokuSolver::isSolution()
   				}
   			}
 
-  			for (int j = 0; j < 9; j++)
+  			for (int j = 0; j < 9; j++)//puts number 1-9 into bank slot of number
   			{
   				rowbank[sudokuBoard.contents[i][j] - 1] = sudokuBoard.contents[i][j];
   				colbank[sudokuBoard.contents[j][i] - 1] = sudokuBoard.contents[j][i];
@@ -118,7 +120,7 @@ bool SudokuSolver::isSolution()
   			for (int z = 0; z < 9; z++)//loop through bank vectors
   			{
   				if (rowbank[z] != z + 1 || colbank[z] != z + 1 || clusterbank[z] != z + 1)
-  				{
+  				{//if rowbank slot j doesn't = j, then false
   					return false;//then return false
   				}
   			}
@@ -318,12 +320,8 @@ void SudokuSolver::findNextSquare(int& row, int& col)
 
   		cluster = cluster - 2;
   	}
-
-
-  row = bestSquare.x;
+  row = bestSquare.x;//set coordinates for the best square
   col = bestSquare.y;
-
-
 }
 
 /*
@@ -454,7 +452,7 @@ void SudokuSolver::print() {
     }
   }
   //briefly pause program
-  cout << endl << "Press enter to continue the program...";
+  cout << endl << "Press enter to continue this program...";
   std::cin.ignore();
 }
 
@@ -471,6 +469,6 @@ void SudokuSolver::printOpenSpots()
          << "Col: " << openSpots[i].y;
   }
   //briefly pause program
-  cout << endl << "Press enter to continue the program...";
+  cout << endl << "Press enter to continue this program...";
   std::cin.ignore();
 }

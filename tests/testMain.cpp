@@ -42,7 +42,9 @@ int main() {
 
 
   SudokuSolver puzzle(fileName);
-
+  cout <<"Unsolved board:";
+  puzzle.print();
+  cout << "Now solving board...";
   puzzle.solvePuzzle();
 
   return 0;
