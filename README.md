@@ -27,9 +27,6 @@ included in the repo to remove those pesky .o files
 ```
 
 
-There is currently one test case, which may be found in the tests folder.
-
-
 The below puzzles are included in the tests folder
 ```
 Easy
