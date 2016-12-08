@@ -7,26 +7,43 @@
 using namespace std;
 
 int main() {
-  SudokuSolver sudokuBoard("tests/easy1.dat");
-/*
-  sudokuBoard.print();
-  bool testPossible[10];
-  memset(testPossible, true, 10);
-  sudokuBoard.findPossibilites(8, 6, testPossible);
+  string fileName;
+  int menuChoice = 0;
 
-  for(int i = 1; i < 10; i++) {
-    cout << i << ": ";
-    if(testPossible[i]) { cout << "possible"; }
-    else { cout << "Impossible"; }
-    cout << endl;
-  }*/
+  cout << endl << "Welcome to SudokuSolver!!";
 
-  sudokuBoard.solvePuzzle();
+  while(menuChoice < 1 || menuChoice > 4) {
+    cout << endl << "Please select one of the below test boards:" << endl
+         << "1. easy" << endl
+         << "2. medium" << endl
+         << "3. hard" << endl
+         << "4. expert" << endl
+         << "Choice: ";
+         cin >> menuChoice;
+         cin.ignore();
+    switch(menuChoice) {
+      case 1:
+        fileName = "tests/easy.dat";
+        break;
+      case 2:
+        fileName = "tests/medium.dat";
+        break;
+      case 3:
+        fileName = "tests/hard.dat";
+        break;
+      case 4:
+        fileName = "tests/expert.dat";
+        break;
+      default:
+        cout << endl << "Please, enter a valid choice.";
+        break;
+    }
+  }
 
-/*
-  sudokuBoard.printOpenSpots();*/
 
-  sudokuBoard.print();
+  SudokuSolver puzzle(fileName);
+
+  puzzle.solvePuzzle();
 
   return 0;
 }
