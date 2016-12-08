@@ -23,7 +23,7 @@ Before pushing a new branch, feel free to run the following script
 included in the repo to remove those pesky .o files
 
 ```
-./cleanUp.sh
+$ ./cleanUp.sh
 ```
 
 
